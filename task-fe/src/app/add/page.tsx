@@ -13,12 +13,14 @@ const AddTask: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:4000/tasks', {
+      const res = await axios.post(`/api/addtask`, {
         title,
         description,
         status,
         dueDate,
-      });
+      body: JSON.stringify({ title, description, status, dueDate })
+    });
+
       router.push('/'); 
     } catch (error) {
       console.error('Error adding task:', error);

@@ -1,51 +1,58 @@
 import { error } from 'console';
 import express, { Request, Response, NextFunction } from 'express';
 import { body, validationResult } from 'express-validator';
-import { Task } from './task-fe/src/types';
+import { Task } from './task-fe/src/app/lib/types';
+import db from './lib/db';
 
 const router = express.Router();
 
-let tasks: Task [] = [];
+let taskslist: Task[] = [];
 
 const taskValidationRules = [
     body('title').notEmpty().withMessage('Title is required'),
     // body('dueDate').optional().isISO8601().withMessage('DueDate must be a valid date'),
 ];
 
-router.get('/', (req: Request, res: Response) => {
-    console.log(tasks)
-    res.json(tasks)
-});
-router.get('/:id', async (req: Request, res: Response) => {
+router.get('/', async (req: Request, res: Response) => {
+    try {
+        const query = 'SELECT * FROM tasks';
+        // callback approach, but we'll go with promise based approach
+        // db.query(query, (err, data) => {
+        //     if (err) return res.json(err)
+        //     return res.json(data)
+        // })
+        const [tasks] = await db.promise().query(query);
 
-    res.json(tasks)
+        console.log("tasks", tasks);
+        res.json(tasks)
+    } catch (error) {
+        console.log('Error fetching tasks:', error);
+        res.status(500).json({ error: 'Error fetching tasks' });
+    }
 });
 
-router.post('/', taskValidationRules, (req: Request, res: Response) => {
+router.post('/', taskValidationRules, async (req: Request, res: Response) => {
     const { title, description, status, dueDate } = req.body;
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+        console.error("error", errors);
         res.status(400).json({ errors: errors.array() });
-        console.log("error", error)
         return;
     }
-    const newTask: Task = {
-        id: tasks.length + 1,
-        title,
-        description,
-        status: status || 'pending',
-        dueDate,
-    };
-
-    tasks.push(newTask);
-    console.log(req)
-    res.status(201).json(newTask);
+    try {
+        const query = 'INSERT into tasks (title, description, status, dueDate) VALUES(?, ?, ?, ?)';
+        const [newtask] = await db.promise().query(query, [title, description, status, dueDate]);
+        res.status(200).json(newtask);
+    } catch (error) {
+        console.log('Error fetching tasks:', error);
+        res.status(500).json({ error: 'Error posting tasks' });
+    }
 })
 
 router.put('/:id', (req: Request, res: Response) => {
     const taskId = parseInt(req.params.id);
     const { title, description, status, dueDate } = req.body;
-    const task = tasks.find(t => t.id === taskId)
+    const task = taskslist.find(t => t.id === taskId)
     if (!task) {
         res.status(404).json({ message: 'Task not found' });
         return;
@@ -60,12 +67,12 @@ router.put('/:id', (req: Request, res: Response) => {
 
 router.delete('/:id', (req: Request, res: Response) => {
     const taskId = parseInt(req.params.id);
-    const task = tasks.findIndex(t => t.id === taskId)
+    const task = taskslist.findIndex(t => t.id === taskId)
     if (task === -1) {
         res.status(404).json({ message: 'Task not found' });
         return;
     }
-    tasks.splice(task, 1);
+    taskslist.splice(task, 1);
     res.status(204).send();
 })
 

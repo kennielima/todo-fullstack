@@ -1,8 +1,9 @@
 import React from 'react';
 import axios from 'axios';
 import Link from 'next/link';
-import { Task } from '@/types';
+import { Task } from '@/app/lib/types';
 import DeleteTask from './components/DeleteTask';
+import { formatDateTime } from './lib/utils';
 
 export const deleteTask = async (id: number) => {
   try {
@@ -20,8 +21,6 @@ const TaskList = async () => {
     }
   });
   const tasks = response.data;
-
-  console.log(`${process.env.BASE_URL}/tasks`)
 
   return (
     <div className="max-w-md mx-auto p-4 bg-white rounded-lg shadow-lg mt-16">
@@ -47,7 +46,7 @@ const TaskList = async () => {
                 </span>
               </div>
               {task.description && <p className="text-gray-700 text-sm mb-1">{task.description}</p>}
-              {task.dueDate && <p className="text-gray-500 text-xs">Due: {task.dueDate}</p>}
+              {task.dueDate && <p className="text-gray-500 text-xs">Due: {formatDateTime(task.dueDate)}</p>}
               <div className="flex justify-between items-center mt-3">
                 <Link href={`/edit/${task.id}`}>
                   <p className="text-blue-500 hover:underline">Edit</p>
