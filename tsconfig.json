@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "target": "ES6",
+    "module": "commonjs",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "outDir": "./dist",
+    "typeRoots": ["./node_modules/@types", "./types"],
+    "moduleResolution": "node"
+  },
+  "include": [
+    "src"
+, "task-fe/src/app/components"  ],
+  "exclude": ["node_modules"]
+}
