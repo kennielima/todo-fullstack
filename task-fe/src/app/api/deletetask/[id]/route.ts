@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { NextResponse } from 'next/server';
 
-export const DELETE = async (req: Request, { params }: { params: { id: string } },) => {
+export const DELETE = async ({ params }: { params: { id: string } }) => {
     const { id } = params;
     try {
         if (!id) {

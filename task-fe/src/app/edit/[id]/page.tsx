@@ -11,19 +11,19 @@ const EditTask: React.FC = () => {
   const [description, setDescription] = useState('');
   const [status, setStatus] = useState('pending');
   const [dueDate, setDueDate] = useState('');
-  console.log(`${process.env.NEXT_PUBLIC_API_URL}/tasks`, `http://localhost:4000/tasks`)
 
   useEffect(() => {
     if (id) {
       const fetchTask = async () => {
         try {
-          const response = await axios.get(`http://localhost:4000/tasks/${id}`);
+          const response = await axios.get(`/api/tasks/${id}`);
           const task = response.data[0];
+          
           setTitle(task.title);
           setDescription(task.description || '');
           setStatus(task.status);
           setDueDate(task.dueDate ? task.dueDate.substring(0, 10) : '');
-          console.log(response, description, id, status)
+
         } catch (error) {
           console.error('Error fetching task:', error);
         }
@@ -36,7 +36,7 @@ const EditTask: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axios.put(`http://localhost:4000/tasks/${id}`, {
+      await axios.put(`/api/edittask/${id}`, {
         title,
         description,
         status,

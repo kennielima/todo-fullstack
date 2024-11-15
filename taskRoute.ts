@@ -6,8 +6,6 @@ import db from './lib/db';
 
 const router = express.Router();
 
-let taskslist: Task[] = [];
-
 const taskValidationRules = [
     body('title').notEmpty().withMessage('Title is required'),
     // body('dueDate').optional().isISO8601().withMessage('DueDate must be a valid date'),
@@ -23,6 +21,17 @@ router.get('/', async (req: Request, res: Response) => {
         // })
         const [tasks] = await db.promise().query(query);
         res.json(tasks)
+    } catch (error) {
+        console.log('Error fetching tasks:', error);
+        res.status(500).json({ error: 'Error fetching tasks' });
+    }
+});
+router.get('/:id', async (req: Request, res: Response) => {
+    const taskId = parseInt(req.params.id);
+    try {
+        const query = 'SELECT * FROM tasks WHERE id = ?';
+        const [task] = await db.promise().query(query, [taskId]);
+        res.json(task)
     } catch (error) {
         console.log('Error fetching tasks:', error);
         res.status(500).json({ error: 'Error fetching tasks' });
@@ -47,20 +56,24 @@ router.post('/', taskValidationRules, async (req: Request, res: Response) => {
     }
 })
 
-router.put('/:id', (req: Request, res: Response) => {
+router.put('/:id', async (req: Request, res: Response) => {
     const taskId = parseInt(req.params.id);
     const { title, description, status, dueDate } = req.body;
-    const task = taskslist.find(t => t.id === taskId)
-    if (!task) {
-        res.status(404).json({ message: 'Task not found' });
-        return;
-    }
+    try {
+    const query = `UPDATE tasks 
+                   SET 
+                    title = COALESCE(?, title),
+                    description = COALESCE(?, description), 
+                    status = COALESCE(?, status), 
+                    dueDate = COALESCE(?, dueDate)
+                    WHERE id = ?`;
+    const [updatedtask] = await db.promise().query(query, [title, description, status, dueDate, taskId])
 
-    task.title = title || task.title;
-    task.description = description || task.description;
-    task.status = status || task.status;
-    task.dueDate = dueDate || task.dueDate;
-    res.status(200).json(task);
+    res.status(200).json(updatedtask);
+    } catch (error){
+        console.log('Error editing tasks:', error);
+        res.status(500).json({ error: 'Error editing tasks' });
+    }
 })
 
 router.delete('/:id', async (req: Request, res: Response) => {
@@ -68,7 +81,7 @@ router.delete('/:id', async (req: Request, res: Response) => {
     const query = 'DELETE from tasks WHERE id = ?'
     try {
         const [task] = await db.promise().query(query, [taskId])
-        res.status(204).send({message: 'task deleted successfully'});
+        res.status(204).send();
 
     } catch (error) {
         console.log('Error deleting tasks:', error);

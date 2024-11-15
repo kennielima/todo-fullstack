@@ -1,10 +1,10 @@
 import axios from 'axios';
-import {  } from 'next/cache';
 import { NextResponse } from 'next/server';
 
-export const GET = async () => {
+export const GET = async (request: Request, { params }: { params: { id: string } }) => {
+    const { id } = params;
   try {
-    const response = await axios.get(`${process.env.API_URL}/tasks`, {
+    const response = await axios.get(`${process.env.API_URL}/tasks/${id}`, {
       headers: {
         'Content-type': "application/json"
       }
@@ -16,7 +16,6 @@ export const GET = async () => {
     return NextResponse.json(data);
   } catch (error) {
     console.error('Error fetching tasks:', error);
-    // res.status(500).json({ message: 'Failed to fetch tasks' });
     return NextResponse.json({ message: 'Failed to fetch tasks' }, { status: 500 });
   }
 }

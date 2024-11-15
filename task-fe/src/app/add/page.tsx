@@ -18,7 +18,7 @@ const AddTask: React.FC = () => {
         description,
         status,
         dueDate,
-      body: JSON.stringify({ title, description, status, dueDate })
+      // body: JSON.stringify({ title, description, status, dueDate })
     });
 
       router.push('/'); 
