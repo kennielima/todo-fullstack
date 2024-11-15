@@ -1,8 +1,9 @@
 import axios from 'axios';
 import { NextResponse } from 'next/server';
 
-export const GET = async (request: Request, { params }: { params: { id: string } }) => {
-    const { id } = params;
+export const GET = async (request: Request, props: { params: Promise<{ id: string }> }) => {
+  const params = await props.params;
+  const { id } = params;
   try {
     const response = await axios.get(`${process.env.API_URL}/tasks/${id}`, {
       headers: {

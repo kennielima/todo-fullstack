@@ -2,7 +2,8 @@ import axios from 'axios';
 import { revalidatePath } from 'next/cache';
 import { NextResponse } from 'next/server';
 
-export const PUT = async (request: Request, { params }: { params: { id: string } }) => {
+export const PUT = async (request: Request, props: { params: Promise<{ id: string }> }) => {
+    const params = await props.params;
     const { id } = params;
     if (!id) {
         return NextResponse.json( {message: 'failed to get id'} )

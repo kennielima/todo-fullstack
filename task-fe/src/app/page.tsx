@@ -2,16 +2,8 @@ import React from 'react';
 import axios from 'axios';
 import Link from 'next/link';
 import { Task } from '@/app/lib/types';
-import DeleteTask from './components/DeleteTask';
+import DeleteTask from './Delete/DeleteTask';
 import { formatDateTime } from './lib/utils';
-
-export const deleteTask = async (id: number) => {
-  try {
-    await axios.delete(`/api/deletetask/${id}`);
-  } catch (error) {
-    console.error('Error deleting task:', error);
-  }
-};
 
 
 const TaskList = async () => {

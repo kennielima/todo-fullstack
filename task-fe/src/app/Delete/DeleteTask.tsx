@@ -1,6 +1,6 @@
 "use client"
 import React from 'react'
-import { deleteTask } from '../page';
+import { deleteTask } from './deletequery';
 import { useRouter } from 'next/navigation';
 
 const DeleteTask = ({id}: {id: number}) => {
