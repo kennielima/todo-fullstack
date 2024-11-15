@@ -9,6 +9,17 @@ const DeleteTask = ({id}: {id: number}) => {
         deleteTask(id);
         router.push('/')
     }
+    // handling delete function in server-side page
+    // const deleteHandler = async (id: number) => {
+    //     try {
+    //         await axios.delete(`/api/deletetask/${id}`);
+    //         console.log('try to delete')
+    //         router.push('/')
+    //     } catch (error) {
+    //         console.error('Error deleting task:', error);
+    //     }
+    // };
+
   return (
         <button className='bg-red-600 text-white py-1 px-2 rounded-md' onClick={deleteHandler}>Delete</button>
     )

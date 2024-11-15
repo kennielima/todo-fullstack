@@ -13,7 +13,7 @@ const AddTask: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`/api/addtask`, {
+       await axios.post(`/api/addtask`, {
         title,
         description,
         status,

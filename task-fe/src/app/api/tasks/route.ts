@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { revalidatePath } from 'next/cache';
 import { NextResponse } from 'next/server';
 
 export const GET = async () => {
@@ -12,7 +13,7 @@ export const GET = async () => {
       throw new Error('Failed to fetch tasks');
     }
     const data = await response.data
-
+    revalidatePath("/");
     return NextResponse.json(data);
   } catch (error) {
     console.error('Error fetching tasks:', error);

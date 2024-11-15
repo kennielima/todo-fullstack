@@ -22,8 +22,6 @@ router.get('/', async (req: Request, res: Response) => {
         //     return res.json(data)
         // })
         const [tasks] = await db.promise().query(query);
-
-        console.log("tasks", tasks);
         res.json(tasks)
     } catch (error) {
         console.log('Error fetching tasks:', error);
@@ -44,7 +42,7 @@ router.post('/', taskValidationRules, async (req: Request, res: Response) => {
         const [newtask] = await db.promise().query(query, [title, description, status, dueDate]);
         res.status(200).json(newtask);
     } catch (error) {
-        console.log('Error fetching tasks:', error);
+        console.log('Error posting tasks:', error);
         res.status(500).json({ error: 'Error posting tasks' });
     }
 })
@@ -65,15 +63,18 @@ router.put('/:id', (req: Request, res: Response) => {
     res.status(200).json(task);
 })
 
-router.delete('/:id', (req: Request, res: Response) => {
+router.delete('/:id', async (req: Request, res: Response) => {
     const taskId = parseInt(req.params.id);
-    const task = taskslist.findIndex(t => t.id === taskId)
-    if (task === -1) {
-        res.status(404).json({ message: 'Task not found' });
-        return;
+    const query = 'DELETE from tasks WHERE id = ?'
+    try {
+        const [task] = await db.promise().query(query, [taskId])
+        res.status(204).send({message: 'task deleted successfully'});
+
+    } catch (error) {
+        console.log('Error deleting tasks:', error);
+        res.status(500).json({ error: 'Error deleting tasks' });
     }
-    taskslist.splice(task, 1);
-    res.status(204).send();
+
 })
 
 export default router;

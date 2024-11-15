@@ -32,7 +32,6 @@ const EditTask: React.FC = () => {
     }
   }, [id]);
   if (!id) return <p>Loading...</p>;
-  console.log(description, id, status)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,7 +42,6 @@ const EditTask: React.FC = () => {
         status,
         dueDate,
       });
-    console.log(description)
       router.push('/');
     } catch (error) {
       console.error('Error updating task:', error);

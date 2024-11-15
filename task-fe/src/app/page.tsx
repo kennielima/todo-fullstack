@@ -7,7 +7,7 @@ import { formatDateTime } from './lib/utils';
 
 export const deleteTask = async (id: number) => {
   try {
-    await axios.delete(`${process.env.API_URL}/tasks/${id}`);
+    await axios.delete(`/api/deletetask/${id}`);
   } catch (error) {
     console.error('Error deleting task:', error);
   }
